@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id         Int            @id @default(autoincrement())
+  nombre     String
+  email      String         @unique
+  password   String
+  username   String
+  rolId      Int            @map("rol_id")
+  rol        Rol            @relation(fields: [rolId], references: [id])
+  conteos    ConteoPapas[]  // Relación uno a muchos con ConteoPapas
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model Rol {
+  id          Int        @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  usuarios    Usuario[]  // Relación uno a muchos con Usuario
+}
+
+model ConteoPapas {
+  id         Int       @id @default(autoincrement())
+  cantidad   Int
+  usuarioId  Int       @map("usuario_id")
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  timestamp  DateTime  @default(now())
+}
+
+model Owner {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  username String
+}
